@@ -1,0 +1,98 @@
+import java.awt.*;
+import java.awt.event.*;
+
+public class AWTCalculator extends Frame implements ActionListener {
+
+    TextField display;
+    double num1 = 0;
+    String operator = "";
+    boolean newInput = true;
+
+    public AWTCalculator() {
+
+        setTitle("AWT Calculator");
+        setSize(300, 400);
+        setLayout(new BorderLayout());
+
+        display = new TextField("0");
+        display.setFont(new Font("Arial", Font.BOLD, 24));
+        display.setEditable(false);
+        add(display, BorderLayout.NORTH);
+
+        Panel panel = new Panel(new GridLayout(4, 4, 5, 5));
+
+        String[] buttons = {
+            "7","8","9","/",
+            "4","5","6","*",
+            "1","2","3","-",
+            "0","C","=","+"
+        };
+
+        for (String t : buttons) {
+            Button b = new Button(t);
+            b.setFont(new Font("Arial", Font.BOLD, 18));
+            b.addActionListener(this);
+            panel.add(b);
+        }
+
+        add(panel, BorderLayout.CENTER);
+
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                System.exit(0);
+            }
+        });
+
+        setVisible(true);
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        String cmd = e.getActionCommand();
+
+        // Number buttons
+        if (cmd.matches("[0-9]")) {
+            if (newInput) {
+                display.setText(cmd);
+                newInput = false;
+            } else {
+                display.setText(display.getText() + cmd);
+            }
+        }
+
+        // Clear
+        else if (cmd.equals("C")) {
+            display.setText("0");
+            num1 = 0;
+            operator = "";
+            newInput = true;
+        }
+
+        // Operator buttons
+        else if (cmd.equals("+") || cmd.equals("-") ||
+                 cmd.equals("*") || cmd.equals("/")) {
+            num1 = Double.parseDouble(display.getText());
+            operator = cmd;
+            newInput = true;
+        }
+
+        // Equals (=) button
+        else if (cmd.equals("=")) {
+            double num2 = Double.parseDouble(display.getText());
+            double result = 0;
+
+            switch (operator) {
+                case "+": result = num1 + num2; break;
+                case "-": result = num1 - num2; break;
+                case "*": result = num1 * num2; break;
+                case "/": result = num1 / num2; break;
+            }
+
+            display.setText(String.valueOf(result));
+            newInput = true;
+        }
+    }
+
+    public static void main(String[] args) {
+        new AWTCalculator();
+    }
+}
